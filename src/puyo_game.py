@@ -104,6 +104,12 @@ class PuyoGame:
                 return True
         return False
 
+    def get_state(self) -> tuple[np.ndarray, np.ndarray]:
+        boards = []
+        for i in range(self.puyo_colors+1):
+            boards.append((self.board == i).astype(int))
+        return np.array(boards), np.array([self.current_puyo, self.next_puyo])
+
     def __str__(self):
         board_str = ""
         for i in range(self.height):
@@ -128,6 +134,7 @@ if __name__ == "__main__":
         print(game.current_puyo)
         result = game.drop(act)
         print(game)
+        print(game.get_state())
         if game.is_game_over:
             break
         if len(result) > 1:
