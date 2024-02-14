@@ -1,0 +1,7 @@
+*.log
+*.pyc
+__pycache__/
+.ipynb_checkpoints
+!.gitkeep
+*.out
+.Trash-0
