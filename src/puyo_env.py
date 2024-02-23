@@ -14,7 +14,7 @@ class PuyoEnv:
         self.board_shape = (width, height, puyo_colors+1)
         self.next_puyo_shape = (2, 2, puyo_colors+1)
 
-    def step(self, action: int) -> tuple[np.ndarray, int, bool, dict]:
+    def step(self, action: int) -> tuple[np.ndarray, np.ndarray, float, bool, dict]:
         erase_count_list = self.game.drop(action)
         board, puyo = self.game.get_state()
         board = torch.tensor(board, dtype=torch.float32)
@@ -27,7 +27,7 @@ class PuyoEnv:
         done = self.game.is_game_over
         if done:
             reward = -1
-        return (board, puyo), reward, done, {}
+        return board, puyo, reward, done, {}
 
     def reset(self) -> np.ndarray:
         self.game = PuyoGame(self.width, self.height, self.puyo_colors)
