@@ -108,9 +108,8 @@ n_episodes = 300  # 学習を行うエピソード数
 step = 0
 for episode in range(n_episodes):
     obs = env.reset()
-    print(obs)
-    print(obs.shape)
-    print(type(obs))
+    obs = torch.tensor(obs, dtype=torch.float32)
+    print("obs", obs.shape, type(obs))
     done = False
     total_reward = 0
 
