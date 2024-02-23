@@ -35,7 +35,7 @@ class CNNQNetwork(nn.Module):
 
         # アドバンテージ
         self.fc_advantage = nn.Sequential(
-            nn.Linear(3136 + next_puyo_shape[0] * next_puyo_shape[1] * next_puyo_shape[2], 512),
+            nn.Linear(5376 + next_puyo_shape[0] * next_puyo_shape[1] * next_puyo_shape[2], 512),
             nn.ReLU(),
             nn.Linear(512, 256),
             nn.ReLU(),
