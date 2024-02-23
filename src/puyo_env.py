@@ -31,7 +31,7 @@ class PuyoEnv:
 
     def reset(self) -> np.ndarray:
         self.game = PuyoGame(self.width, self.height, self.puyo_colors)
-        return self.game.board
+        return self.game.get_state()
 
     def render(self) -> None:
         print(self.game)
