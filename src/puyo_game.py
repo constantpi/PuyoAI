@@ -108,7 +108,12 @@ class PuyoGame:
         boards = []
         for i in range(self.puyo_colors+1):
             boards.append((self.board == i).astype(int))
-        return np.array(boards), np.array([self.current_puyo, self.next_puyo])
+        decorded_next_puyo = np.zeros((2, 2, self.puyo_colors+1), dtype=int)
+        decorded_next_puyo[0][0][self.current_puyo[0]] = 1
+        decorded_next_puyo[0][1][self.current_puyo[1]] = 1
+        decorded_next_puyo[1][0][self.next_puyo[0]] = 1
+        decorded_next_puyo[1][1][self.next_puyo[1]] = 1
+        return np.array(boards), decorded_next_puyo
 
     def __str__(self):
         board_str = ""
