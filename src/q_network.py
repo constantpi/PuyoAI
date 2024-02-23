@@ -64,5 +64,5 @@ class CNNQNetwork(nn.Module):
         else:
             # 行動を選択する時には勾配を追跡する必要がない
             with torch.no_grad():
-                action = torch.argmax(self.forward(board, next_puyo)).item()  # unsqueeze(0)を追加する必要がある？
+                action = torch.argmax(self.forward(board.unsqueeze(0), next_puyo.unsqueeze(0))).item()
         return action
