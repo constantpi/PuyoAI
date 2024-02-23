@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 
 class CNNQNetwork(nn.Module):
-    def __init__(self, board_shape, next_puyo_shape, n_action):
+    def __init__(self, board_shape: tuple[int, int, int], next_puyo_shape: tuple[int, int, int], n_action: int) -> None:
         super(CNNQNetwork, self).__init__()
         self.board_shape = board_shape # (width, height, puyo_colors+1) : (6, 14, 5)
         self.next_puyo_shape = next_puyo_shape # (2, 2, puyo_colors+1) : (2, 2, 5)
