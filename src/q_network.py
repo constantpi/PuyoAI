@@ -42,7 +42,7 @@ class CNNQNetwork(nn.Module):
             nn.Linear(256, n_action)
         )
 
-    def forward(self, board, next_puyo):
+    def forward(self, board: torch.Tensor, next_puyo: torch.Tensor) -> torch.Tensor:
         feature = self.conv_layers(board)
         feature = feature.view(feature.size(0), -1)  # 　Flatten. (B, C, H, W) -> (B, C*H*W)
 
