@@ -58,11 +58,11 @@ class CNNQNetwork(nn.Module):
         return torch.tanh(action_values)
 
     # epsilon-greedy. 確率epsilonでランダムに行動し, それ以外はニューラルネットワークの予測結果に基づいてgreedyに行動します.
-    def act(self, obs, epsilon):
+    def act(self, board: torch.Tensor, next_puyo: torch.Tensor, epsilon: float) -> int:
         if random.random() < epsilon:
             action = random.randrange(self.n_action)
         else:
             # 行動を選択する時には勾配を追跡する必要がない
             with torch.no_grad():
-                action = torch.argmax(self.forward(obs.unsqueeze(0))).item()
+                action = torch.argmax(self.forward(board, next_puyo)).item()  # unsqueeze(0)を追加する必要がある？
         return action
