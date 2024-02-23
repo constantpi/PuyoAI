@@ -12,6 +12,7 @@ class PuyoEnv:
         self.puyo_colors = puyo_colors
         self.action_space = 4 * width - 2
         self.board_shape = (width, height, puyo_colors+1)
+        self.next_puyo_shape = (2, 2, puyo_colors+1)
 
     def step(self, action: int) -> tuple[np.ndarray, int, bool, dict]:
         erase_count_list = self.game.drop(action)
