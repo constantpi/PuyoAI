@@ -83,7 +83,6 @@ beta_decay = 500000
 # beta_beginから始めてbeta_endまでbeta_decayかけて線形に増やす
 def beta_func(step): return min(beta_end, beta_begin + (beta_end - beta_begin) * (step / beta_decay))
 
-
 """
     探索のためのパラメータε
 """
@@ -92,7 +91,6 @@ epsilon_end = 0.01
 epsilon_decay = 50000
 # epsilon_beginから始めてepsilon_endまでepsilon_decayかけて線形に減らす
 def epsilon_func(step): return max(epsilon_end, epsilon_begin - (epsilon_begin - epsilon_end) * (step / epsilon_decay))
-
 
 """
     その他のハイパーパラメータ
@@ -108,22 +106,27 @@ n_episodes = 300  # 学習を行うエピソード数
 
 step = 0
 for episode in range(n_episodes):
-    obs = env.reset()
-    obs = torch.tensor(obs, dtype=torch.float32)
-    print("obs", obs.shape, type(obs))
+    board, puyo = env.reset()
+    # obs = torch.tensor(obs, dtype=torch.float32)
+    board = torch.tensor(board, dtype=torch.float32)
+    puyo = torch.tensor(puyo, dtype=torch.float32)
     done = False
     total_reward = 0
 
     while not done:
         # ε-greedyで行動を選択
-        action = net.act(obs.float().to(device), epsilon_func(step))
+        action = net.act(board.float().to(device), puyo.float().to(device),
+                         epsilon_func(step))
         # 環境中で実際に行動
-        next_obs, reward, done, _ = env.step(action)
+        next_board, next_puyo, reward, done, _ = env.step(action)
         total_reward += reward
 
         # リプレイバッファに経験を蓄積
-        replay_buffer.push([obs, action, reward, next_obs, done])
-        obs = next_obs
+        # replay_buffer.push([obs, action, reward, next_obs, done])
+        replay_buffer.push([board, puyo, action, reward, next_board, next_puyo, done])
+        # obs = next_obs
+        board = next_board
+        puyo = next_puyo
 
         # ネットワークを更新
         if len(replay_buffer) > initial_buffer_size:
