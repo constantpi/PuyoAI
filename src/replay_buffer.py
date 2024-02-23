@@ -36,7 +36,6 @@ class PrioritizedReplayBuffer(object):
         # >> 演習: 確率probに従ってサンプルする経験のインデックスを用意しましょう
         # ヒント: np.random.choice などが便利です
         indices = np.random.choice(a=range(len(self.buffer)), size=batch_size, p=prob)
-        indices = np.random.choice(len(self.buffer), batch_size, p=prob)
 
         # >> 演習: 上式の通りに重点サンプリングの補正のための重みを計算してみましょう
         weights = (len(self.buffer)*prob[indices])**(-beta)
