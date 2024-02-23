@@ -5,19 +5,20 @@ import random
 import torch
 import torch.nn as nn
 
+
 class CNNQNetwork(nn.Module):
     def __init__(self, board_shape: tuple[int, int, int], next_puyo_shape: tuple[int, int, int], n_action: int) -> None:
         super(CNNQNetwork, self).__init__()
-        self.board_shape = board_shape # (width, height, puyo_colors+1) : (6, 14, 5)
-        self.next_puyo_shape = next_puyo_shape # (2, 2, puyo_colors+1) : (2, 2, 5)
-        self.n_action = n_action # 行動の数:22
+        self.board_shape = board_shape  # (width, height, puyo_colors+1) : (6, 14, 5)
+        self.next_puyo_shape = next_puyo_shape  # (2, 2, puyo_colors+1) : (2, 2, 5)
+        self.n_action = n_action  # 行動の数:22
         # Dueling Networkでも, 畳込み部分は共有する
         self.conv_layers = nn.Sequential(
-            nn.Conv2d(board_shape[2], 32, kernel_size=3, stride=1, padding=1), # (6, 14, 5) -> (6, 14, 32)
+            nn.Conv2d(board_shape[2], 32, kernel_size=3, stride=1, padding=1),  # (6, 14, 5) -> (6, 14, 32)
             nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1), # (6, 14, 32) -> (6, 14, 64)
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),  # (6, 14, 32) -> (6, 14, 64)
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1), # (6, 14, 64) -> (6, 14, 64)
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),  # (6, 14, 64) -> (6, 14, 64)
             nn.ReLU()
         )
         cnn_out_size = board_shape[0] * board_shape[1] * 64
@@ -43,7 +44,7 @@ class CNNQNetwork(nn.Module):
 
     def forward(self, board, next_puyo):
         feature = self.conv_layers(board)
-        feature = feature.view(feature.size(0), -1)  #　Flatten. (B, C, H, W) -> (B, C*H*W)
+        feature = feature.view(feature.size(0), -1)  # 　Flatten. (B, C, H, W) -> (B, C*H*W)
 
         state_values = self.fc_state(feature)
 

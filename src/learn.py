@@ -5,12 +5,13 @@ from q_network import CNNQNetwork
 import torch
 from torch import nn, optim
 
+
 def update(batch_size, beta):
     obs, action, reward, next_obs, done, indices, weights = replay_buffer.sample(batch_size, beta)
     obs, action, reward, next_obs, done, weights \
         = obs.float().to(device), action.to(device), reward.to(device), next_obs.float().to(device), done.to(device), weights.to(device)
 
-    #　ニューラルネットワークによるQ関数の出力から, .gatherで実際に選択した行動に対応する価値を集めてきます.
+    # 　ニューラルネットワークによるQ関数の出力から, .gatherで実際に選択した行動に対応する価値を集めてきます.
     q_values = net(obs).gather(1, action.unsqueeze(1)).squeeze(1)
 
     # 目標値の計算なので勾配を追跡しない
@@ -18,13 +19,13 @@ def update(batch_size, beta):
         # Double DQN.
         # >> 演習: Double DQNのターゲット価値の計算を実装してみましょう
         # ① 現在のQ関数でgreedyに行動を選択し,
-        greedy_action_next = torch.argmax(net.forward(next_obs),dim=1).unsqueeze(1)
-        #print(net.forward(next_obs))
-        #print(greedy_action_next)
+        greedy_action_next = torch.argmax(net.forward(next_obs), dim=1).unsqueeze(1)
+        # print(net.forward(next_obs))
+        # print(greedy_action_next)
         # ②　対応する価値はターゲットネットワークのものを参照します.
-        q_values_next = target_net.forward(next_obs).gather(1,greedy_action_next).squeeze(1)
-        #print(target_net.forward(next_obs))
-        #print(q_values_next)
+        q_values_next = target_net.forward(next_obs).gather(1, greedy_action_next).squeeze(1)
+        # print(target_net.forward(next_obs))
+        # print(q_values_next)
 
     # ベルマン方程式に基づき, 更新先の価値を計算します.
     # (1 - done)をかけているのは, ゲームが終わった後の価値は0とみなすためです.
@@ -37,7 +38,7 @@ def update(batch_size, beta):
     loss.backward()
     optimizer.step()
 
-    #　TD誤差に基づいて, サンプルされた経験の優先度を更新します.
+    # 　TD誤差に基づいて, サンプルされた経験の優先度を更新します.
     replay_buffer.update_priorities(indices, (target_q_values - q_values).abs().detach().cpu().numpy())
 
     return loss.item()
@@ -52,7 +53,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 """
     リプレイバッファの宣言
 """
-buffer_size = 100000  #　リプレイバッファに入る経験の最大数
+buffer_size = 100000  # 　リプレイバッファに入る経験の最大数
 initial_buffer_size = 10000  # 学習を開始する最低限の経験の数
 replay_buffer = PrioritizedReplayBuffer(buffer_size)
 
@@ -80,7 +81,7 @@ beta_begin = 0.4
 beta_end = 1.0
 beta_decay = 500000
 # beta_beginから始めてbeta_endまでbeta_decayかけて線形に増やす
-beta_func = lambda step: min(beta_end, beta_begin + (beta_end - beta_begin) * (step / beta_decay))
+def beta_func(step): return min(beta_end, beta_begin + (beta_end - beta_begin) * (step / beta_decay))
 
 
 """
@@ -90,13 +91,13 @@ epsilon_begin = 1.0
 epsilon_end = 0.01
 epsilon_decay = 50000
 # epsilon_beginから始めてepsilon_endまでepsilon_decayかけて線形に減らす
-epsilon_func = lambda step: max(epsilon_end, epsilon_begin - (epsilon_begin - epsilon_end) * (step / epsilon_decay))
+def epsilon_func(step): return max(epsilon_end, epsilon_begin - (epsilon_begin - epsilon_end) * (step / epsilon_decay))
 
 
 """
     その他のハイパーパラメータ
 """
-gamma = 0.99  #　割引率
+gamma = 0.99  # 　割引率
 batch_size = 32
 n_episodes = 300  # 学習を行うエピソード数
 

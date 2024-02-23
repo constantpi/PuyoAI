@@ -4,6 +4,7 @@ Prioritized Experience Replayを実現するためのメモリクラス.
 import numpy as np
 import torch
 
+
 class PrioritizedReplayBuffer(object):
     def __init__(self, buffer_size):
         self.buffer_size = buffer_size
@@ -26,7 +27,7 @@ class PrioritizedReplayBuffer(object):
         self.priorities[self.index] = self.priorities.max()
         self.index = (self.index + 1) % self.buffer_size
 
-    def sample(self, batch_size:int, alpha=0.6, beta=0.4) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, np.ndarray, torch.Tensor]:
+    def sample(self, batch_size: int, alpha=0.6, beta=0.4) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, np.ndarray, torch.Tensor]:
         # 現在経験が入っている部分に対応する優先度を取り出し, サンプルする確率を計算
         priorities = self.priorities[: self.buffer_size if len(self.buffer) == self.buffer_size else self.index]
         priorities = priorities ** alpha
@@ -34,7 +35,7 @@ class PrioritizedReplayBuffer(object):
 
         # >> 演習: 確率probに従ってサンプルする経験のインデックスを用意しましょう
         # ヒント: np.random.choice などが便利です
-        indices = np.random.choice(a=range(len(self.buffer)),size=batch_size,p=prob)
+        indices = np.random.choice(a=range(len(self.buffer)), size=batch_size, p=prob)
         indices = np.random.choice(len(self.buffer), batch_size, p=prob)
 
         # >> 演習: 上式の通りに重点サンプリングの補正のための重みを計算してみましょう
