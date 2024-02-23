@@ -26,7 +26,7 @@ class PrioritizedReplayBuffer(object):
         self.priorities[self.index] = self.priorities.max()
         self.index = (self.index + 1) % self.buffer_size
 
-    def sample(self, batch_size, alpha=0.6, beta=0.4):
+    def sample(self, batch_size:int, alpha=0.6, beta=0.4) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, np.ndarray, torch.Tensor]:
         # 現在経験が入っている部分に対応する優先度を取り出し, サンプルする確率を計算
         priorities = self.priorities[: self.buffer_size if len(self.buffer) == self.buffer_size else self.index]
         priorities = priorities ** alpha
