@@ -32,7 +32,7 @@ def update(batch_size, beta):
 
     # ベルマン方程式に基づき, 更新先の価値を計算します.
     # (1 - done)をかけているのは, ゲームが終わった後の価値は0とみなすためです.
-    target_q_values = (1-gamma)*reward + gamma * q_values_next * (1 - done)
+    target_q_values = (1 - gamma) * reward + gamma * q_values_next * (1 - done)
     # print("target_q_values",q_values)
 
     # Prioritized Experience Replayのために, ロスに重み付けを行なって更新します.
@@ -86,7 +86,6 @@ beta_decay = 500000
 # beta_beginから始めてbeta_endまでbeta_decayかけて線形に増やす
 def beta_func(step): return min(beta_end, beta_begin + (beta_end - beta_begin) * (step / beta_decay))
 
-
 """
     探索のためのパラメータε
 """
@@ -96,7 +95,6 @@ epsilon_decay = 50000
 # epsilon_beginから始めてepsilon_endまでepsilon_decayかけて線形に減らす
 def epsilon_func(step): return max(epsilon_end, epsilon_begin - (epsilon_begin - epsilon_end) * (step / epsilon_decay))
 
-
 """
     その他のハイパーパラメータ
 """
@@ -104,11 +102,9 @@ gamma = 0.99  # 　割引率
 batch_size = 32
 n_episodes = 30000  # 学習を行うエピソード数
 
-
 """
     学習の実行
 """
-
 step = 0
 for episode in range(n_episodes):
     board, puyo = env.reset()
