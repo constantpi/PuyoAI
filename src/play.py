@@ -1,23 +1,29 @@
 from puyo_env import PuyoEnv
-from replay_buffer import PrioritizedReplayBuffer
 from q_network import CNNQNetwork
 
 import torch
-from torch import nn, optim
 import argparse
+import glob
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--n', type=int, default=1)
+parser.add_argument('--model', type=str, default='model_*.pth')
 args = parser.parse_args()
 n_episodes = args.n
+model_name = args.model
 print(n_episodes, "回のプレイします")
 
 env = PuyoEnv(width=6, height=14, puyo_colors=4)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 net = CNNQNetwork(board_shape=env.board_shape, next_puyo_shape=env.next_puyo_shape, n_action=env.action_space).to(device)
-net.load_state_dict(torch.load('/root/main/models/model_60.pth'))
-
+# 指定されていなければmodel_ の中で最も大きい数字のものを選ぶ
+path = '/root/main/models/' + model_name
+model_list = glob.glob(path)
+model_list.sort()
+model_path = model_list[-1]
+print('model_path:', model_path)
+net.load_state_dict(torch.load(model_path))
 
 step = 0
 model_cnt = 0
