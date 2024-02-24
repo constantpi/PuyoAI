@@ -38,7 +38,7 @@ class PuyoEnv:
 
 
 if __name__ == '__main__':
-    env = PuyoEnv(6, 12, 4)
+    env = PuyoEnv(6, 14, 4)
     env.reset()
     env.render()
     done = False
