@@ -7,7 +7,7 @@ from torch import nn, optim
 import matplotlib.pyplot as plt
 
 
-def update(batch_size, beta):
+def update(batch_size: int, beta: float) -> float:
     board, puyo, action, reward, next_board, next_puyo, done, indices, weights = replay_buffer.sample(batch_size, beta)
     board, puyo, action, reward, next_board, next_puyo, done, weights \
         = board.float().to(device), puyo.float().to(device), action.to(device), reward.to(device), next_board.float().to(device), next_puyo.float().to(device), done.to(device), weights.to(device)
@@ -75,8 +75,11 @@ loss_func = nn.SmoothL1Loss(reduction='none')  # ロスはSmoothL1loss（別名H
 beta_begin = 0.4
 beta_end = 1.0
 beta_decay = 500000
-# beta_beginから始めてbeta_endまでbeta_decayかけて線形に増やす
-def beta_func(step): return min(beta_end, beta_begin + (beta_end - beta_begin) * (step / beta_decay))
+
+
+def beta_func(step: int) -> float:  # beta_beginから始めてbeta_endまでbeta_decayかけて線形に増やす
+    return min(beta_end, beta_begin + (beta_end - beta_begin) * (step / beta_decay))
+
 
 """
     探索のためのパラメータε
@@ -85,7 +88,11 @@ epsilon_begin = 1.0
 epsilon_end = 0.01
 epsilon_decay = 50000
 # epsilon_beginから始めてepsilon_endまでepsilon_decayかけて線形に減らす
-def epsilon_func(step): return max(epsilon_end, epsilon_begin - (epsilon_begin - epsilon_end) * (step / epsilon_decay))
+
+
+def epsilon_func(step: int) -> float:
+    return max(epsilon_end, epsilon_begin - (epsilon_begin - epsilon_end) * (step / epsilon_decay))
+
 
 """
     その他のハイパーパラメータ
