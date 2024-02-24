@@ -29,7 +29,7 @@ class PuyoEnv:
             reward = -1
         return board, puyo, reward, done, {}
 
-    def reset(self) -> np.ndarray:
+    def reset(self) -> tuple[np.ndarray, np.ndarray]:
         self.game = PuyoGame(self.width, self.height, self.puyo_colors)
         return self.game.get_state()
 

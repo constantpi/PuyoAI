@@ -16,7 +16,7 @@ class PuyoGame:
         self.score = 0
         self.is_game_over = False
 
-    def drop(self, action: int) -> None:
+    def drop(self, action: int) -> list[int]:
         """
         actionが0から2*width-1の範囲のときは縦にぷよを落とす
         actionが2*widthから4*width-3の範囲のときは横向きでぷよを落とす
@@ -58,7 +58,7 @@ class PuyoGame:
         self.is_game_over = self.game_over()
         return erase_count_list
 
-    def erase(self) -> None:
+    def erase(self) -> int:
         """
         浮いているぷよを落とす
         つながっている同色のぷよを消す
@@ -73,7 +73,7 @@ class PuyoGame:
                 new_board[i][self.height - j - 1] = puyo_list[j]
         self.board = new_board
 
-        def dfs(x, y, color):
+        def dfs(x: int, y: int, color: int) -> int:
             if x < 0 or x >= self.width or y < 0 or y >= self.height:
                 return 0
             if visited[x][y] or self.board[x][y] != color:
@@ -115,7 +115,7 @@ class PuyoGame:
         decorded_next_puyo[1][1][self.next_puyo[1]] = 1
         return np.array(boards), decorded_next_puyo
 
-    def __str__(self):
+    def __str__(self) -> str:
         board_str = ""
         for i in range(self.height):
             for j in range(self.width):

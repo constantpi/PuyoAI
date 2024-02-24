@@ -6,18 +6,18 @@ import torch
 
 
 class PrioritizedReplayBuffer(object):
-    def __init__(self, buffer_size):
+    def __init__(self, buffer_size: int) -> None:
         self.buffer_size = buffer_size
         self.index = 0
         self.buffer = []
         self.priorities = np.zeros(buffer_size, dtype=np.float32)
         self.priorities[0] = 1.0
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.buffer)
 
     # 経験をリプレイバッファに保存する． 経験は(obs, action, reward, next_obs, done)の5つ組を想定
-    def push(self, experience):
+    def push(self, experience: tuple[np.ndarray, np.ndarray, int, float, np.ndarray, np.ndarray, bool]) -> None:
         if len(self.buffer) < self.buffer_size:
             self.buffer.append(experience)
         else:
@@ -27,7 +27,7 @@ class PrioritizedReplayBuffer(object):
         self.priorities[self.index] = self.priorities.max()
         self.index = (self.index + 1) % self.buffer_size
 
-    def sample(self, batch_size: int, alpha=0.6, beta=0.4) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, np.ndarray, torch.Tensor]:
+    def sample(self, batch_size: int, alpha=0.6, beta=0.4) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, np.ndarray, torch.Tensor]:
         # 現在経験が入っている部分に対応する優先度を取り出し, サンプルする確率を計算
         priorities = self.priorities[: self.buffer_size if len(self.buffer) == self.buffer_size else self.index]
         priorities = priorities ** alpha
@@ -56,5 +56,5 @@ class PrioritizedReplayBuffer(object):
                 torch.as_tensor(weights, dtype=torch.float32))
 
     # 優先度を更新する. 優先度が極端に小さくなって経験が全く選ばれないということがないように, 微小値を加算しておく.
-    def update_priorities(self, indices, priorities):
+    def update_priorities(self, indices: np.ndarray, priorities: np.ndarray) -> None:
         self.priorities[indices] = priorities + 1e-4
