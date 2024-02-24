@@ -4,6 +4,7 @@ from q_network import CNNQNetwork
 
 import torch
 from torch import nn, optim
+import matplotlib.pyplot as plt
 
 
 def update(batch_size, beta):
@@ -97,6 +98,8 @@ n_episodes = 30000  # 学習を行うエピソード数
     学習の実行
 """
 step = 0
+total_reward_list = []
+mean_reward_list = []
 for episode in range(n_episodes):
     board, puyo = env.reset()
     board = torch.tensor(board, dtype=torch.float32)
@@ -128,3 +131,13 @@ for episode in range(n_episodes):
         step += 1
 
     print('Episode: {},  Step: {},  Reward: {}'.format(episode + 1, step + 1, total_reward))
+    total_reward_list.append(total_reward)
+    if len(total_reward_list) >= 100:
+        mean_reward = sum(total_reward_list[:100]) / 100
+        mean_reward_list.append(mean_reward)
+        total_reward_list = total_reward_list[100:]
+        plt.plot(mean_reward_list)
+        plt.xlabel('100 Episode')
+        plt.ylabel('Mean Reward')
+        plt.savefig('mean_reward.png')
+        plt.clf()
