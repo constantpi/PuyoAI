@@ -100,6 +100,7 @@ n_episodes = 30000  # 学習を行うエピソード数
 step = 0
 total_reward_list = []
 mean_reward_list = []
+model_cnt = 0
 for episode in range(n_episodes):
     board, puyo = env.reset()
     board = torch.tensor(board, dtype=torch.float32)
@@ -127,6 +128,10 @@ for episode in range(n_episodes):
         # ターゲットネットワークを定期的に同期させる
         if (step + 1) % target_update_interval == 0:
             target_net.load_state_dict(net.state_dict())
+            # ネットワークの重みを保存
+            if model_cnt % 20 == 0:
+                torch.save(net.state_dict(), f'/root/main/models/model_{model_cnt}.pth')
+            model_cnt += 1
 
         step += 1
 
