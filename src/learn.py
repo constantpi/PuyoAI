@@ -54,7 +54,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     リプレイバッファの宣言
 """
 buffer_size = 100000  # 　リプレイバッファに入る経験の最大数
-initial_buffer_size = 10000  # 学習を開始する最低限の経験の数
+initial_buffer_size = 3000  # 学習を開始する最低限の経験の数
 replay_buffer = PrioritizedReplayBuffer(buffer_size)
 
 
@@ -83,6 +83,7 @@ beta_decay = 500000
 # beta_beginから始めてbeta_endまでbeta_decayかけて線形に増やす
 def beta_func(step): return min(beta_end, beta_begin + (beta_end - beta_begin) * (step / beta_decay))
 
+
 """
     探索のためのパラメータε
 """
@@ -92,12 +93,13 @@ epsilon_decay = 50000
 # epsilon_beginから始めてepsilon_endまでepsilon_decayかけて線形に減らす
 def epsilon_func(step): return max(epsilon_end, epsilon_begin - (epsilon_begin - epsilon_end) * (step / epsilon_decay))
 
+
 """
     その他のハイパーパラメータ
 """
 gamma = 0.99  # 　割引率
 batch_size = 32
-n_episodes = 300  # 学習を行うエピソード数
+n_episodes = 30000  # 学習を行うエピソード数
 
 
 """
