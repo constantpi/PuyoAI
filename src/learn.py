@@ -29,7 +29,7 @@ def update(batch_size, beta):
 
     # ベルマン方程式に基づき, 更新先の価値を計算します.
     # (1 - done)をかけているのは, ゲームが終わった後の価値は0とみなすためです.
-    target_q_values = reward + gamma * q_values_next * (1 - done)
+    target_q_values = (1-gamma)*reward + gamma * q_values_next * (1 - done)
     # print("target_q_values",q_values)
 
     # Prioritized Experience Replayのために, ロスに重み付けを行なって更新します.
