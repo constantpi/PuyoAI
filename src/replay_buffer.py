@@ -42,13 +42,23 @@ class PrioritizedReplayBuffer(object):
         weights /= weights.max()
 
         # 上でサンプルしたインデックスに基づいて経験をサンプルし, (obs, action, reward, next_obs, done)に分ける
-        obs, action, reward, next_obs, done = zip(*[self.buffer[i] for i in indices])
+        # obs, action, reward, next_obs, done = zip(*[self.buffer[i] for i in indices])
+        board, puyo, action, reward, next_board, next_puyo, done = zip(*[self.buffer[i] for i in indices])
 
         # あとで計算しやすいようにtorch.Tensorに変換して(obs, action, reward, next_obs, done, indices, weights)の7つ組を返す
-        return (torch.stack(obs),
+        # return (torch.stack(obs),
+        #         torch.as_tensor(action),
+        #         torch.as_tensor(reward, dtype=torch.float32),
+        #         torch.stack(next_obs),
+        #         torch.as_tensor(done, dtype=torch.uint8),
+        #         indices,
+        #         torch.as_tensor(weights, dtype=torch.float32))
+        return (torch.stack(board),
+                torch.stack(puyo),
                 torch.as_tensor(action),
                 torch.as_tensor(reward, dtype=torch.float32),
-                torch.stack(next_obs),
+                torch.stack(next_board),
+                torch.stack(next_puyo),
                 torch.as_tensor(done, dtype=torch.uint8),
                 indices,
                 torch.as_tensor(weights, dtype=torch.float32))
