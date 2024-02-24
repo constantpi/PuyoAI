@@ -126,7 +126,6 @@ class PuyoGame:
 
 if __name__ == "__main__":
     game = PuyoGame(6, 12, 4)
-    # game.board[0][5] = 1
     print(game.board)
     print(game.current_puyo)
     print(game.next_puyo)

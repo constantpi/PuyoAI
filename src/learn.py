@@ -7,10 +7,7 @@ from torch import nn, optim
 
 
 def update(batch_size, beta):
-    # obs, action, reward, next_obs, done, indices, weights = replay_buffer.sample(batch_size, beta)
     board, puyo, action, reward, next_board, next_puyo, done, indices, weights = replay_buffer.sample(batch_size, beta)
-    # obs, action, reward, next_obs, done, weights \
-    #     = obs.float().to(device), action.to(device), reward.to(device), next_obs.float().to(device), done.to(device), weights.to(device)
     board, puyo, action, reward, next_board, next_puyo, done, weights \
         = board.float().to(device), puyo.float().to(device), action.to(device), reward.to(device), next_board.float().to(device), next_puyo.float().to(device), done.to(device), weights.to(device)
 
@@ -22,18 +19,13 @@ def update(batch_size, beta):
         # Double DQN.
         # >> 演習: Double DQNのターゲット価値の計算を実装してみましょう
         # ① 現在のQ関数でgreedyに行動を選択し,
-        greedy_action_next = torch.argmax(net.forward(next_board, next_puyo), dim=1).unsqueeze(1)
-        # print(net.forward(next_obs))
-        # print(greedy_action_next)
+        greedy_action_next = torch.argmax(net(next_board, next_puyo), dim=1).unsqueeze(1)
         # ②　対応する価値はターゲットネットワークのものを参照します.
-        q_values_next = target_net.forward(next_board, next_puyo).gather(1, greedy_action_next).squeeze(1)
-        # print(target_net.forward(next_obs))
-        # print(q_values_next)
+        q_values_next = target_net(next_board, next_puyo).gather(1, greedy_action_next).squeeze(1)
 
     # ベルマン方程式に基づき, 更新先の価値を計算します.
     # (1 - done)をかけているのは, ゲームが終わった後の価値は0とみなすためです.
     target_q_values = (1 - gamma) * reward + gamma * q_values_next * (1 - done)
-    # print("target_q_values",q_values)
 
     # Prioritized Experience Replayのために, ロスに重み付けを行なって更新します.
     optimizer.zero_grad()
@@ -64,7 +56,6 @@ replay_buffer = PrioritizedReplayBuffer(buffer_size)
 """
     ネットワークの宣言
 """
-print(env.action_space)
 net = CNNQNetwork(board_shape=env.board_shape, next_puyo_shape=env.next_puyo_shape, n_action=env.action_space).to(device)
 target_net = CNNQNetwork(board_shape=env.board_shape, next_puyo_shape=env.next_puyo_shape, n_action=env.action_space).to(device)
 target_update_interval = 2000  # 学習安定化のために用いるターゲットネットワークの同期間隔
@@ -108,7 +99,6 @@ n_episodes = 30000  # 学習を行うエピソード数
 step = 0
 for episode in range(n_episodes):
     board, puyo = env.reset()
-    # obs = torch.tensor(obs, dtype=torch.float32)
     board = torch.tensor(board, dtype=torch.float32)
     puyo = torch.tensor(puyo, dtype=torch.float32)
     done = False
@@ -123,9 +113,7 @@ for episode in range(n_episodes):
         total_reward += reward
 
         # リプレイバッファに経験を蓄積
-        # replay_buffer.push([obs, action, reward, next_obs, done])
         replay_buffer.push([board, puyo, action, reward, next_board, next_puyo, done])
-        # obs = next_obs
         board = next_board
         puyo = next_puyo
 
