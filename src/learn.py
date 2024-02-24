@@ -7,23 +7,26 @@ from torch import nn, optim
 
 
 def update(batch_size, beta):
-    obs, action, reward, next_obs, done, indices, weights = replay_buffer.sample(batch_size, beta)
-    obs, action, reward, next_obs, done, weights \
-        = obs.float().to(device), action.to(device), reward.to(device), next_obs.float().to(device), done.to(device), weights.to(device)
+    # obs, action, reward, next_obs, done, indices, weights = replay_buffer.sample(batch_size, beta)
+    board, puyo, action, reward, next_board, next_puyo, done, indices, weights = replay_buffer.sample(batch_size, beta)
+    # obs, action, reward, next_obs, done, weights \
+    #     = obs.float().to(device), action.to(device), reward.to(device), next_obs.float().to(device), done.to(device), weights.to(device)
+    board, puyo, action, reward, next_board, next_puyo, done, weights \
+        = board.float().to(device), puyo.float().to(device), action.to(device), reward.to(device), next_board.float().to(device), next_puyo.float().to(device), done.to(device), weights.to(device)
 
     # 　ニューラルネットワークによるQ関数の出力から, .gatherで実際に選択した行動に対応する価値を集めてきます.
-    q_values = net(obs).gather(1, action.unsqueeze(1)).squeeze(1)
+    q_values = net(board, puyo).gather(1, action.unsqueeze(1)).squeeze(1)
 
     # 目標値の計算なので勾配を追跡しない
     with torch.no_grad():
         # Double DQN.
         # >> 演習: Double DQNのターゲット価値の計算を実装してみましょう
         # ① 現在のQ関数でgreedyに行動を選択し,
-        greedy_action_next = torch.argmax(net.forward(next_obs), dim=1).unsqueeze(1)
+        greedy_action_next = torch.argmax(net.forward(next_board, next_puyo), dim=1).unsqueeze(1)
         # print(net.forward(next_obs))
         # print(greedy_action_next)
         # ②　対応する価値はターゲットネットワークのものを参照します.
-        q_values_next = target_net.forward(next_obs).gather(1, greedy_action_next).squeeze(1)
+        q_values_next = target_net.forward(next_board, next_puyo).gather(1, greedy_action_next).squeeze(1)
         # print(target_net.forward(next_obs))
         # print(q_values_next)
 
