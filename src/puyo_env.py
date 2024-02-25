@@ -76,10 +76,11 @@ if __name__ == '__main__':
     done = False
     while not done:
         action = np.random.randint(0, env.action_space)
-        (board, puyo), reward, done, _ = env.step(action)
+        board, puyo, reward, done, _ = env.step(action, record=True)
         print(board)
         print(puyo)
         print(reward)
         print(done)
         env.render()
         print()
+    env.save_image()
