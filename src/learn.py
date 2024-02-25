@@ -97,7 +97,7 @@ def epsilon_func(step: int) -> float:
 """
     その他のハイパーパラメータ
 """
-gamma = 0.99  # 　割引率
+gamma = 0.7  # 　割引率
 batch_size = 32
 n_episodes = 30000  # 学習を行うエピソード数
 
