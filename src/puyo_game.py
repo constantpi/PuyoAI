@@ -57,6 +57,20 @@ class PuyoGame:
         self.is_game_over = self.game_over()
         return erase_count_list
 
+    def just_drop(self) -> None:
+        """
+        浮いているぷよを落とす
+        """
+        new_board = np.zeros((self.width, self.height), dtype=int)
+        for i in range(self.width):
+            puyo_list = []
+            for j in range(self.height-1, -1, -1):
+                if self.board[i][j] != 0:
+                    puyo_list.append(self.board[i][j])
+            for j in range(len(puyo_list)):
+                new_board[i][self.height - j - 1] = puyo_list[j]
+        self.board = new_board
+
     def erase(self) -> int:
         """
         浮いているぷよを落とす
