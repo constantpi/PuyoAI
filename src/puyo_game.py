@@ -14,8 +14,9 @@ class PuyoGame:
         self.next_puyo = (random.randint(1, puyo_colors),
                           random.randint(1, puyo_colors))
         self.is_game_over = False
+        self.board_history = [(self.board.copy(), self.current_puyo, self.next_puyo, 0)]
 
-    def drop(self, action: int) -> list[int]:
+    def drop(self, action: int, record=False) -> list[int]:
         """
         actionが0から2*width-1の範囲のときは縦にぷよを落とす
         actionが2*widthから4*width-3の範囲のときは横向きでぷよを落とす
@@ -51,9 +52,23 @@ class PuyoGame:
             while y < self.height and self.board[x][y] == 0:
                 y += 1
             self.board[x][y - 1] = puyo[1]
-        erase_count_list = [self.erase()]
-        while erase_count_list[-1] > 0:
-            erase_count_list.append(self.erase())
+        erase_count_list = []
+        rensa = 0
+        if record:
+            while True:
+                self.just_drop()
+                self.board_history.append((self.board.copy(), self.current_puyo, self.next_puyo, rensa))
+                erase_count = self.erase()
+                erase_count_list.append(erase_count)
+                if erase_count == 0:
+                    break
+                rensa += 1
+        else:
+            while True:
+                erase_count = self.erase()
+                erase_count_list.append(erase_count)
+                if erase_count == 0:
+                    break
         self.is_game_over = self.game_over()
         return erase_count_list
 
