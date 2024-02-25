@@ -13,7 +13,6 @@ class PuyoGame:
                              random.randint(1, puyo_colors))
         self.next_puyo = (random.randint(1, puyo_colors),
                           random.randint(1, puyo_colors))
-        self.score = 0
         self.is_game_over = False
 
     def drop(self, action: int) -> list[int]:
@@ -129,7 +128,6 @@ if __name__ == "__main__":
     print(game.board)
     print(game.current_puyo)
     print(game.next_puyo)
-    print(game.score)
     print(game.game_over)
     print(game)
     for i in range(100):
