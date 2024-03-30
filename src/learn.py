@@ -6,6 +6,8 @@ import torch
 from torch import nn, optim
 import matplotlib.pyplot as plt
 import random
+from datetime import datetime
+import pickle
 
 
 def update(batch_size: int, beta: float) -> float:
@@ -165,3 +167,5 @@ for episode in range(n_episodes):
         plt.ylabel('Mean Reward')
         plt.savefig('mean_reward.png')
         plt.clf()
+    with open(file_name, 'wb') as f:
+        pickle.dump(mean_reward_list, f)
