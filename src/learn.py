@@ -5,6 +5,7 @@ from q_network import CNNQNetwork
 import torch
 from torch import nn, optim
 import matplotlib.pyplot as plt
+import random
 
 
 def update(batch_size: int, beta: float) -> float:
@@ -100,7 +101,7 @@ def epsilon_func(step: int) -> float:
 gamma = 0.7  # 　割引率
 batch_size = 32
 n_episodes = 30000  # 学習を行うエピソード数
-
+curriculum = False  # カリキュラム学習を行うかどうか
 """
     学習の実行
 """
@@ -108,8 +109,11 @@ step = 0
 total_reward_list = []
 mean_reward_list = []
 model_cnt = 0
+max_level = 4
+level = max_level
+file_name = datetime.now().strftime('%Y%m%d%H%M%S')+".txt"
 for episode in range(n_episodes):
-    board, puyo = env.reset()
+    board, puyo = env.reset(level=level)
     board = torch.tensor(board, dtype=torch.float32)
     puyo = torch.tensor(puyo, dtype=torch.float32)
     done = False
@@ -142,8 +146,16 @@ for episode in range(n_episodes):
 
         step += 1
 
-    print('Episode: {},  Step: {},  Reward: {}'.format(episode + 1, step + 1, total_reward))
+    print('Episode: {},  Step: {}, Level: {}, Reward: {}'.format(episode + 1, step + 1, level, total_reward))
     total_reward_list.append(total_reward)
+    if not curriculum:
+        level = 0
+    elif total_reward > 2.5:
+        level -= 1
+        if level < 0:
+            level = random.randint(0, max_level)
+    elif total_reward < 1.5:
+        level = min(max_level, level + 1)
     if len(total_reward_list) >= 100:
         mean_reward = sum(total_reward_list[:100]) / 100
         mean_reward_list.append(mean_reward)
