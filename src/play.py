@@ -50,20 +50,6 @@ for episode in range(n_episodes):
         puyo = next_puyo
         step += 1
         env.render()
-        # boardの画像を作成
-        # for i in range(6):
-        #     for j in range(13):
-        #         color = 0
-        #         for c in range(1, 5):
-        #             if board[c][i][j] == 1:
-        #                 color = c
-        #         if color == 0:
-        #             draw.rectangle((i*60, j*60, (i+1)*60, (j+1)*60), fill=(255, 255, 255), outline=(0, 0, 0))
-        #         else:
-        #             draw.rectangle((i*60, j*60, (i+1)*60, (j+1)*60), fill=(255, 255, 255), outline=(0, 0, 0))
-        #             # draw.ellipse((i*60+10, j*60+10, (i+1)*60-10, (j+1)*60-10), fill=(255, 255, 255), outline=(0, 0, 0))
-        #             draw.ellipse((i*60+15, j*60+15, (i+1)*60-15, (j+1)*60-15), fill=colors[color], outline=(0, 0, 0))
-        # img.save(f'/root/main/src/images/{step}.png')
 
     print('Episode: {},  Step: {},  Reward: {}'.format(episode + 1, step + 1, total_reward))
 env.save_image()
