@@ -1,4 +1,5 @@
 from puyo_game import PuyoGame
+from curriculum_board import make_curriculum_board
 
 import numpy as np
 import torch
@@ -30,8 +31,10 @@ class PuyoEnv:
             reward = -1
         return board, puyo, reward, done, {}
 
-    def reset(self) -> tuple[np.ndarray, np.ndarray]:
+    def reset(self, level=0) -> tuple[np.ndarray, np.ndarray]:
         self.game = PuyoGame(self.width, self.height, self.puyo_colors)
+        self.game.board = make_curriculum_board(self.width, self.height, self.puyo_colors, level)
+        self.game.board_history = [(self.game.board.copy(), self.game.current_puyo, self.game.next_puyo, 0)]
         return self.game.get_state()
 
     def render(self) -> None:
@@ -71,7 +74,7 @@ class PuyoEnv:
 
 if __name__ == '__main__':
     env = PuyoEnv(6, 14, 4)
-    env.reset()
+    env.reset(4)
     env.render()
     done = False
     while not done:
