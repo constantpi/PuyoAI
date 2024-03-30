@@ -7,9 +7,11 @@ import glob
 from PIL import Image, ImageDraw
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--level', type=int, default=0)
 parser.add_argument('--n', type=int, default=1)
 parser.add_argument('--model', type=str, default='model_*.pth')
 args = parser.parse_args()
+level = args.level
 n_episodes = args.n
 model_name = args.model
 print(n_episodes, "回のプレイします")
@@ -30,7 +32,7 @@ step = 0
 model_cnt = 0
 colors = [(255, 255, 255), (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]
 for episode in range(n_episodes):
-    board, puyo = env.reset()
+    board, puyo = env.reset(level=level)
     board = torch.tensor(board, dtype=torch.float32)
     puyo = torch.tensor(puyo, dtype=torch.float32)
     done = False
