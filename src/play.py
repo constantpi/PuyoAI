@@ -5,6 +5,7 @@ import torch
 import argparse
 import glob
 from PIL import Image, ImageDraw
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--level', type=int, default=0)
@@ -14,6 +15,7 @@ args = parser.parse_args()
 level = args.level
 n_episodes = args.n
 model_name = args.model
+record = n_episodes == 1
 print(n_episodes, "回のプレイします")
 
 env = PuyoEnv(width=6, height=14, puyo_colors=4)
@@ -29,6 +31,7 @@ print('model_path:', model_path)
 net.load_state_dict(torch.load(model_path))
 
 step = 0
+total_reward_list = []
 for episode in range(n_episodes):
     board, puyo = env.reset(level=level)
     board = torch.tensor(board, dtype=torch.float32)
@@ -42,12 +45,20 @@ for episode in range(n_episodes):
         # 行動を選択
         action = net.act(board.float().to(device), puyo.float().to(device), 0.0)
         # 環境中で実際に行動
-        next_board, next_puyo, reward, done, _ = env.step(action, record=True)
+        next_board, next_puyo, reward, done, _ = env.step(action, record=record)
         total_reward += reward
         board = next_board
         puyo = next_puyo
         step += 1
-        env.render()
+        if record:
+            env.render()
 
     print('Episode: {},  Step: {},  Reward: {}'.format(episode + 1, step + 1, total_reward))
-env.save_image()
+    total_reward_list.append(total_reward)
+if record:
+    env.save_image()
+else:
+    print('total_reward_list:', total_reward_list)
+    print('mean_reward:', sum(total_reward_list)/n_episodes)
+    print('std_reward:', np.std(total_reward_list))
+    print('mean_step:', step/n_episodes)
