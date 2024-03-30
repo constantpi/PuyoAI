@@ -29,8 +29,6 @@ print('model_path:', model_path)
 net.load_state_dict(torch.load(model_path))
 
 step = 0
-model_cnt = 0
-colors = [(255, 255, 255), (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]
 for episode in range(n_episodes):
     board, puyo = env.reset(level=level)
     board = torch.tensor(board, dtype=torch.float32)
