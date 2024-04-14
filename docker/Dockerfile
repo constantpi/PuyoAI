@@ -37,6 +37,8 @@ RUN pip3 install torch tensorboardX
 
 RUN echo "source /root/main/docker/scripts/initialize-bash-shell.sh" >> /root/.bashrc
 
+RUN apt-get update && apt-get install -y fonts-noto-cjk
+
 # Overwrite the entry point of the parent image.
 ENTRYPOINT []
 
